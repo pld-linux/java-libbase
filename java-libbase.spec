@@ -1,5 +1,3 @@
-# TODO
-# - ant contrib dep
 #
 # Conditional build:
 %bcond_without	javadoc		# don't build javadoc
@@ -17,11 +15,12 @@ Source0:	http://downloads.sourceforge.net/jfreereport/%{srcname}-%{version}.zip
 Patch0:		build.patch
 URL:		http://reporting.pentaho.org/
 BuildRequires:	ant
-#BuildRequires:	ant-contrib
+BuildRequires:	ant-contrib
 BuildRequires:	ant-nodeps
 BuildRequires:	java-commons-logging
 BuildRequires:	jdk
 BuildRequires:	jpackage-utils
+BuildRequires:	rpm-javaprov
 BuildRequires:	rpmbuild(macros) >= 1.553
 Requires:	java-commons-logging
 Requires:	jpackage-utils
@@ -47,15 +46,15 @@ Javadoc for LibBase.
 %undos build.properties
 %patch0 -p1
 
+find -name "*.jar" | xargs rm -v
+
 mkdir -p lib
 ln -s %{_javadir}/ant lib/ant-contrib
-
-find -name "*.jar" | xargs rm -v
 
 %build
 build-jar-repository -s -p lib commons-logging-api
 
-%ant jar javadoc
+%ant jar %{?with_javadoc:javadoc}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -64,8 +63,11 @@ install -d $RPM_BUILD_ROOT%{_javadir}
 cp -p dist/%{srcname}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}
 ln -s %{srcname}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{srcname}.jar
 
-install -d $RPM_BUILD_ROOT%{_javadocdir}/%{srcname}
-cp -a bin/javadoc/docs/api $RPM_BUILD_ROOT%{_javadocdir}/%{srcname}
+%if %{with javadoc}
+install -d $RPM_BUILD_ROOT%{_javadocdir}/%{srcname}-%{version}
+cp -a bin/javadoc/docs/api $RPM_BUILD_ROOT%{_javadocdir}/%{srcname}-%{version}
+ln -s %{srcname}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{srcname} # ghost symlink
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -76,8 +78,8 @@ ln -nfs %{srcname}-%{version} %{_javadocdir}/%{srcname}
 %files
 %defattr(644,root,root,755)
 %doc ChangeLog.txt licence-LGPL.txt README.txt
-%{_javadir}/%{name}-%{version}.jar
-%{_javadir}/%{name}.jar
+%{_javadir}/%{srcname}-%{version}.jar
+%{_javadir}/%{srcname}.jar
 
 %if %{with javadoc}
 %files javadoc
