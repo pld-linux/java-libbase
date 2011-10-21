@@ -22,7 +22,7 @@ BuildRequires:	ant-nodeps
 BuildRequires:	java-commons-logging
 BuildRequires:	jdk
 BuildRequires:	jpackage-utils
-BuildRequires:	rpmbuild(macros) >= 1.300
+BuildRequires:	rpmbuild(macros) >= 1.553
 Requires:	java-commons-logging
 Requires:	jpackage-utils
 BuildArch:	noarch
@@ -44,6 +44,7 @@ Javadoc for LibBase.
 
 %prep
 %setup -qc
+%undos build.properties
 %patch0 -p1
 
 mkdir -p lib
