@@ -3,7 +3,6 @@
 %bcond_without	javadoc		# don't build javadoc
 
 %define		srcname		libbase
-%include	/usr/lib/rpm/macros.java
 Summary:	JFree Base Services
 Name:		java-%{srcname}
 Version:	1.1.3
