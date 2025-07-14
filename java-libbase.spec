@@ -43,7 +43,7 @@ Javadoc for LibBase.
 %prep
 %setup -qc
 %undos build.properties
-%patch0 -p1
+%patch -P0 -p1
 
 find -name "*.jar" | xargs rm -v
 
